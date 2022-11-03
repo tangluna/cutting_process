@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="potato">
+  <link name="link0">
+  <contact>
+      <lateral_friction value="1"/>
+  </contact>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="2.5" />
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <!--<box size="0.035 0.35 0.035" />  Leek -->
+        <box size="0.05 0.25 0.06" />  <!-- Cucumber -->
+        <!--<cylinder radius="0.25" length="0.06"/>--> <!-- Cucumber Need to rotate! (make new urdf-->
+        <!--<box size="0.06 0.16 0.035" /> Banana-->
+      </geometry>
+      <material name="brown">
+        <color rgba="0.7 0.5 0.2 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.05 0.25 0.06" />
+      </geometry>
+    </collision>
+  </link>
+</robot>

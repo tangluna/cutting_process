@@ -1,0 +1,6 @@
+*.pyc
+*.pkl
+*.sas
+*.plan
+scripts/temp/*
+scripts/statistics/*

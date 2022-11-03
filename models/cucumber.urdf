@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<robot name="potato">
+  <link name="link0">
+  <contact>
+      <lateral_friction value="1"/>
+  </contact>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.1" />
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <!--<origin xyz="0 0 0" rpy="1.57 0 0" />--> <!-- For cylinder -->
+      <geometry>
+        <!--<box size="0.06 0.16 0.06" />--> <!-- Eggplant -->
+        <box size="0.05 0.25 0.035" /> <!-- Banana-->
+        <!--<box size="0.05 0.30 0.06" />--> <!-- Cucumber-->
+        <!--<box size="0.05 0.25 0.06" />-->
+        <!--<cylinder radius="0.0275" length="0.25"/>-->
+      </geometry>
+      <material name="green">
+        <color rgba="0.5 0.8 0.5 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.05 0.25 0.035" />
+        <!--<cylinder radius="0.03" length="0.25" />-->
+      </geometry>
+    </collision>
+  </link>
+</robot>

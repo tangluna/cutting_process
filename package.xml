@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+    <name>cutting_process</name>
+    <version>0.0.0</version>
+    <description>
+     Cutting as a Process within TAMP
+    </description>
+    <!--Add in repo once its set up-->
+    <url type="repository">https://github.com/rachelholladay/cutting_process/</url>
+    <maintainer email="rhollada@mit.edu">Rachel Holladay</maintainer>
+    <author email="rhollada@mit.edu">Rachel Holladay</author>
+    <license>BSD</license>
+    <buildtool_depend>catkin</buildtool_depend>
+    <build_depend>python</build_depend>
+    <run_depend>python</run_depend>
+    <run_depend>python-numpy</run_depend>
+</package>
