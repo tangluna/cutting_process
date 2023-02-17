@@ -119,9 +119,9 @@ if __name__ == '__main__':
         print("No plan found")
     else:
         saved_world.restore()
-        raw_input("Execute?")
+        input("Execute?")
         cutting_process.util.ExecuteActions(plan)
         IPython.embed()
 
-    raw_input('Finish?')
+    input('Finish?')
     pb_robot.utils.disconnect()

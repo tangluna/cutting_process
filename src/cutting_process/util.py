@@ -70,5 +70,6 @@ def ExecuteActions(plan):
 
         executionItems = args[-1]
         for e in executionItems:
+            print(e)
             e.simulate()
-            raw_input("Next?")
+            input("Next?")
