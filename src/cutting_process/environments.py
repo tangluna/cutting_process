@@ -23,6 +23,7 @@ def cuttingTableScene():
     curr_path = os.getcwd()
     models_path = os.path.join(os.path.dirname(curr_path), 'models')
 
+    # adding things to pybullet ref! file, body, spot
     table_file = os.path.join(models_path, 'panda_table.urdf')
     table = pb_robot.body.createBody(table_file)
     table.set_point([0.2, 0, -0.12])

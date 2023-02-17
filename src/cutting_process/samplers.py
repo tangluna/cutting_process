@@ -137,7 +137,7 @@ def get_ik_fn(fixed=None, num_attempts=10):
                 if DEBUG_FAILURE: print("Q grasp failed")
                 continue
 
-            command = [pb_robot.vobj.MoveToTouch(arm, q_approach, q_grasp), grasp,
+            command = [pb_robot.vobj.MoveToTouch(arm, q_approach, q_grasp), grasp, # think lights
                        pb_robot.vobj.MoveToTouch(arm, q_grasp, q_approach)]
             conf = pb_robot.vobj.BodyConf(arm, q_approach)
             return (conf, command)
@@ -217,7 +217,7 @@ def get_stable_grasp_gen():
 
 def slice_cut(fixed=[]):
     '''Generate a function for planning the slicing motion'''
-    def fn(arm, knife, obj, grasp, obj_pose, w0, w1):
+    def fn(arm, knife, obj, grasp, obj_pose, w0, w1): # obj_pose is where planner wants it to be -- preconditions; obj.pose may be different because out of order things (while planning pybullet world != pddl world)
         '''For arm, use knife (held by grasp) to cut obj (located at obj_pose) by slicing with wrenches w1 and w2'''
 
         for _ in range(5): 
@@ -282,12 +282,14 @@ def slice_cut(fixed=[]):
             # Package up all variables to return
             conf_start = pb_robot.vobj.BodyConf(arm, q_preStartFollow)
             conf_end = pb_robot.vobj.BodyConf(arm, q_postEndFollow)
+            #pb_robot.arm.SetJointValues(q_startFollow0)
+
             command = [pb_robot.vobj.MoveToTouch(arm, q_preStartFollow, q_startFollow0),
                        pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow0, ee_path=cart_hand_path0, stiffness=stiffness0), 
                        pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow1, ee_path=cart_hand_path1, stiffness=stiffness1),
                        pb_robot.vobj.MoveFromTouch(arm, q_postEndFollow)]
             pb_robot.viz.remove_all_debug()
 
-            return (conf_start, conf_end, command,)
+            return (conf_start, q_startFollow1, command,) # returns end config too!
         return None
     return fn

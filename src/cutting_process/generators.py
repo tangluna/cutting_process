@@ -44,11 +44,14 @@ def getObjRelations(body1, body2, body2_pose=None):
 
 def matingPositions_knifeCut(knife, obj, obj_pose):
     '''Generate feasible starting locations for the knife to cut the obj'''
+## aabb -- axis aligned bounding box -> widest width + widest height]
+# right is cutting on one side, left is cutting on the other side
+# cutting on other side leads to sign flip in wrenches which is hard so only right here
     obj_aabb = pb_robot.aabb.get_aabb(obj)
     width = (pb_robot.aabb.get_aabb_extent(obj_aabb)[0] / 2.0) - 0.01
     height = pb_robot.aabb.get_aabb_extent(obj_aabb)[2] -0.003
     T0_w = obj_pose
-
+# obj frame not world?
     Tw_e_right = numpy.array([[1., 0., 0., 0.15],
                               [0., 0, -1., 0.],
                               [0., 1., 0., height], 
@@ -56,6 +59,7 @@ def matingPositions_knifeCut(knife, obj, obj_pose):
     Bw_right = numpy.zeros((6, 2))
     Bw_right[0, :] = [-0.001, 0.001]
     Bw_right[1, :] = [-width/2.0, width/2.0]
+    # redef to cut banana in center
     Bw_right[1, :] = [-0.001, 0.001]
     Bw_right[2, :] = [-0.001, 0.001]
     right_tsr = TSR(T0_w=T0_w, Tw_e=Tw_e_right, Bw=Bw_right)

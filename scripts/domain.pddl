@@ -99,6 +99,10 @@
                        (SliceCutWrenches ?knife ?o ?w1 ?w2)
                        (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t))
     :effect (and (Sliced ?o) 
+                 ; (not (?o))                ; old object DNE --- negate all of the facts associated with it -- think abt what facts need
+                 ; (exists ())               ; new pieces (2) sampler will give object that now exists
+                                           ; new pieces are "from" old object
+                                           ; TODO later: length things?
                  (not (AtConf ?a ?q0)) 
                  (AtConf ?a ?q1) 
                  (CanMove))

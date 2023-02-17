@@ -5,7 +5,7 @@
     :outputs (?p)
     :certified (and (Pose ?o ?p) (Supported ?o ?p ?r))
   )
-  (:stream sample-grasp
+  (:stream sample-grasp ; look a grasp exists
     :inputs (?a ?o)
     :domain (and (Arm ?a) (Graspable ?o))
     :outputs (?g)
