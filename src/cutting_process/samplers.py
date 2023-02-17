@@ -286,8 +286,9 @@ def slice_cut(fixed=[]):
 
             command = [pb_robot.vobj.MoveToTouch(arm, q_preStartFollow, q_startFollow0),
                        pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow0, ee_path=cart_hand_path0, stiffness=stiffness0), 
-                       pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow1, ee_path=cart_hand_path1, stiffness=stiffness1),
-                       pb_robot.vobj.MoveFromTouch(arm, q_postEndFollow)]
+                       #pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow1, ee_path=cart_hand_path1, stiffness=stiffness1),
+                       #pb_robot.vobj.MoveFromTouch(arm, q_postEndFollow)
+                       ]
             pb_robot.viz.remove_all_debug()
 
             return (conf_start, q_startFollow1, command,) # returns end config too!
