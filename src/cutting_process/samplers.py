@@ -11,6 +11,8 @@ import numpy
 import pb_robot
 import cutting_process
 
+import os
+
 DEBUG_FAILURE = False
 
 def backInKin(arm, q_start, direction_in, grasp=None, fixed=[]):
@@ -45,6 +47,15 @@ def backOutKin(arm, q_end, direction_out, grasp=None, fixed=[]):
     return q_postEnd
 
 #####################################################################
+
+def split_object(o): ## can get o's attribs? can add predicates here? aaaa
+    curr_path = os.getcwd() # poses and things
+    models_path = os.path.join(os.path.dirname(curr_path), 'models')
+    potato_file = os.path.join(models_path, 'cucumber.urdf')
+    potato1 = pb_robot.body.createBody(potato_file)
+    potato2 = pb_robot.body.createBody(potato_file)
+    return (potato1, potato2) # add to visualizer??? is this pddl adding???
+
 
 def pose_collision_test(o1, p1, o2, p2):
     '''Check if object o1 (at pose p1) is in collision with object o2 (at pose p2)'''

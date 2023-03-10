@@ -9,6 +9,8 @@
     (Traj ?t)
     (Region ?r)
 
+;    (Graspable ?o) ;?????
+;    (From ?o ?o) ; is this how do?
 
     (On ?o ?r)
     (Holding ?a ?o)
@@ -88,7 +90,9 @@
                  (CanMove))
   )
   (:action slice_cut
-    :parameters (?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t)
+    :parameters (?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t ?oh1 
+    ;?oh2
+    )
     :precondition (and (Arm ?a) 
                        (Knife ?knife) 
                        (Cuttable ?o)
@@ -97,8 +101,18 @@
                        (StableHolding ?knife ?w1) (StableHolding ?knife ?w2)
                        (Pose ?o ?p) (AtPose ?o ?p)
                        (SliceCutWrenches ?knife ?o ?w1 ?w2)
-                       (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t))
-    :effect (and (Sliced ?o) 
+                       (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t)
+                       (Cuttable ?oh1)
+  ;                     (Graspable ?oh1) (Movable ?oh1) (Cuttable ?oh1) ;(Stackable ?oh1) ; sus. fix.
+  ;                     (Graspable ?oh2) (Movable ?oh2) (Cuttable ?oh2) ;(Stackable ?oh2)
+                       )
+    :effect (and (Sliced ?o)
+                 (not (Graspable ?o)) ; also negate poses????
+                 (not (Movable ?o))
+                 (not (Cuttable ?o))
+                 ;(not (Stackable ?o)) ; stackable sus. fix later
+                 (From ?oh1 ?o) ; flipping???
+                 (From ?oh2 ?o) ; order?
                  ; (not (?o))                ; old object DNE --- negate all of the facts associated with it -- think abt what facts need
                  ; (exists ())               ; new pieces (2) sampler will give object that now exists
                                            ; new pieces are "from" old object

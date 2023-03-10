@@ -11,6 +11,14 @@
     :outputs (?g)
     :certified (Grasp ?a ?o ?g)
   )
+  ;(:stream generate-cut-objects ; more potatoes!!!
+  ;  :inputs (?o)
+  ;  :domain (and (Cuttable ?o))
+  ;  :outputs (?oh1 ?oh2)
+  ;  :certified (and (Graspable ?oh1) (Movable ?oh1) (Cuttable ?oh1) ;(Stackable ?oh1) ; stackable is being sus :( how add in all surfaces without python?
+  ;                  (Graspable ?oh2) (Movable ?oh2) (Cuttable ?oh2) ;(Stackable ?oh2)
+  ;                  ) ; need to add Pose / AtPose?
+  ;)
   (:stream inverse-kinematics
     :inputs (?a ?o ?p ?g)
     :domain (and (Arm ?a) (Pose ?o ?p) (Grasp ?a ?o ?g))
@@ -41,11 +49,11 @@
     :outputs (?q0 ?q1 ?t)
     :certified (and (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t) (Conf ?q0) (Conf ?q1) (Traj ?t))
   )
-  (:stream test-pose-cfree
-    :inputs (?o1 ?p1 ?o2 ?p2)
-    :domain (and (Pose ?o1 ?p1) (Pose ?o2 ?p2))
-    :certified (ObjCFreePose ?o1 ?p1 ?o2 ?p2)
-  )
+  ;(:stream test-pose-cfree
+  ;  :inputs (?o1 ?p1 ?o2 ?p2)
+  ;  :domain (and (Pose ?o1 ?p1) (Pose ?o2 ?p2))
+  ;  :certified (ObjCFreePose ?o1 ?p1 ?o2 ?p2)
+  ;)
   (:stream test-traj-cfree
     :inputs (?a ?t ?o ?p)
     :domain (and (Arm ?a) (Traj ?t) (Pose ?o ?p))
