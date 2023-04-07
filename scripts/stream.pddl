@@ -7,8 +7,16 @@
   )
   (:stream sample-grasp ; look a grasp exists
     :inputs (?a ?o)
-    :domain (and (Arm ?a) (Graspable ?o))
-    :outputs (?g)
+    :domain (and (Arm ?a) (Graspable ?o)) ; this bad. should be object not property --> how make error
+    ; check if obj-effect -- stream-cert is allowed in code
+    ; streams output things that are always true -- add facts to state
+    ; effects set what true in world; can change
+    ; streams -- like look-up book. info doesnt change; only gen ONCE -- so could theoretically precomp but not in cont. world so can't do this bc too many possibilities
+    ;         -- break! yay! -- extends?
+    ; fact added as soon as stream added!
+    ; so need to diff from grasp vs AtGrasp in potato -- piece exists from stream vs exists in world
+    ; goal is derived pred?
+    :outputs (?g) ; we tell what this is ground to! pddl doesn't choose! these outputs correspond to python function -- pddl only sees that grounded facts exist
     :certified (Grasp ?a ?o ?g)
   )
   ;(:stream generate-cut-objects ; more potatoes!!!
@@ -49,11 +57,11 @@
     :outputs (?q0 ?q1 ?t)
     :certified (and (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t) (Conf ?q0) (Conf ?q1) (Traj ?t))
   )
-  ;(:stream test-pose-cfree
-  ;  :inputs (?o1 ?p1 ?o2 ?p2)
-  ;  :domain (and (Pose ?o1 ?p1) (Pose ?o2 ?p2))
-  ;  :certified (ObjCFreePose ?o1 ?p1 ?o2 ?p2)
-  ;)
+  (:stream test-pose-cfree
+    :inputs (?o1 ?p1 ?o2 ?p2)
+    :domain (and (Pose ?o1 ?p1) (Pose ?o2 ?p2))
+    :certified (ObjCFreePose ?o1 ?p1 ?o2 ?p2)
+  )
   (:stream test-traj-cfree
     :inputs (?a ?t ?o ?p)
     :domain (and (Arm ?a) (Traj ?t) (Pose ?o ?p))

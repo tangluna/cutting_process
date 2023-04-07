@@ -9,8 +9,9 @@
     (Traj ?t)
     (Region ?r)
 
-;    (Graspable ?o) ;?????
-;    (From ?o ?o) ; is this how do?
+    (Graspable ?o)
+    (From ?o ?o)
+    (InWorld ?o)
 
     (On ?o ?r)
     (Holding ?a ?o)
@@ -93,23 +94,26 @@
     :parameters (?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t ?oh1 
     ?oh2
     )
+    ; if param in neither precond or eff, wont assign it anything
     :precondition (and (Arm ?a) 
                        (Knife ?knife) 
                        (Cuttable ?o)
+                       (InWorld ?o)
                        (Conf ?q0) (AtConf ?a ?q0)
                        (Grasp ?a ?knife ?g) (AtGrasp ?a ?knife ?g) 
                        (StableHolding ?knife ?w1) (StableHolding ?knife ?w2)
                        (Pose ?o ?p) (AtPose ?o ?p)
                        (SliceCutWrenches ?knife ?o ?w1 ?w2)
                        (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t)
-  ;                     (Cuttable ?oh1)
-                       (Graspable ?oh1) (Movable ?oh1) (Cuttable ?oh1) ;(Stackable ?oh1) ; sus. fix.
-                       (Graspable ?oh2) (Movable ?oh2) (Cuttable ?oh2) ;(Stackable ?oh2)
+                       (not (InWorld ?oh1))
+                       (not (InWorld ?oh2))
+                       (Cuttable ?oh1)
+                       (Cuttable ?oh2)
                        )
     :effect (and (Sliced ?o)
-                 (not (Graspable ?o)) ; also negate poses????
-                 (not (Movable ?o))
-                 (not (Cuttable ?o))
+                 (not (InWorld ?o)) ; also negate poses????
+                 (InWorld ?oh1)
+                 (InWorld ?oh2)
                  ;(not (Stackable ?o)) ; stackable sus. fix later
                  (From ?oh1 ?o) ; flipping???
                  (From ?oh2 ?o) ; order?

@@ -28,7 +28,8 @@ def pddlstream_from_problem(robots, movable):
         init += [('HandEmpty', r.arm), 
                  ('Arm', r.arm),
                  ('Conf', conf), 
-                 ('AtConf', r.arm, conf)]
+                 ('AtConf', r.arm, conf),
+                 ('InWorld', r.arm)]
 
     fixed = cutting_process.util.get_fixed(robots+movable) 
     print('Movable:', [m.get_name() for m in movable])
@@ -38,7 +39,8 @@ def pddlstream_from_problem(robots, movable):
         init += [('Graspable', body),
                  ('Pose', body, pose),
                  ('AtPose', body, pose), 
-                 ('Movable', body)]
+                 ('Movable', body),
+                 ('InWorld',  body)]
 
         if 'potato' in body.get_name():
             init += [('Cuttable', body)]
@@ -58,6 +60,7 @@ def pddlstream_from_problem(robots, movable):
                 init += [('Supported', body, pose, surface)]
 
     for surface in fixed:
+        init += [('InWorld', surface)]
         if 'table' in surface.get_name():
             init += [('Region', surface)]
         if 'holder' in surface.get_name():
