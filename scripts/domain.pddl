@@ -92,24 +92,24 @@
   )
   (:action slice_cut
     :parameters (?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t 
-  ;  ?oh1 
-  ;  ?oh2
+    ?oh1 
+    ?oh2
     )
     ; if param in neither precond or eff, wont assign it anything
     :precondition (and (Arm ?a) 
                        (Knife ?knife) 
                        (Cuttable ?o)
-  ;                     (InWorld ?o)
+                       (InWorld ?o)
                        (Conf ?q0) (AtConf ?a ?q0)
                        (Grasp ?a ?knife ?g) (AtGrasp ?a ?knife ?g) 
                        (StableHolding ?knife ?w1) (StableHolding ?knife ?w2)
                        (Pose ?o ?p) (AtPose ?o ?p)
                        (SliceCutWrenches ?knife ?o ?w1 ?w2)
                        (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t)
-  ;                     (not (InWorld ?oh1))
-  ;                     (not (InWorld ?oh2))
-  ;                     (Cuttable ?oh1)
-  ;                     (Cuttable ?oh2)
+                       (not (InWorld ?oh1))
+                       (not (InWorld ?oh2))
+    ;                   (Cuttable ?oh1)
+    ;                   (Cuttable ?oh2)
                        )
     :effect (and (Sliced ?o)
   ;               (not (InWorld ?o)) ; also negate poses????
