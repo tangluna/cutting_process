@@ -23,8 +23,8 @@
   ;  :inputs (?o)
   ;  :domain (and (Cuttable ?o))
   ;  :outputs (?oh1 ?oh2)
-  ;  :certified (and (Graspable ?oh1) (Movable ?oh1) (Cuttable ?oh1) ;(Stackable ?oh1) ; stackable is being sus :( how add in all surfaces without python?
-  ;                  (Graspable ?oh2) (Movable ?oh2) (Cuttable ?oh2) ;(Stackable ?oh2)
+  ;  :certified (and (Cuttable ?oh1) ;(Stackable ?oh1) ; stackable is being sus :( how add in all surfaces without python?
+  ;                  (Cuttable ?oh2) ;ADD OTHER RELAVENT PREDICATES
   ;                  ) ; need to add Pose / AtPose?
   ;)
   (:stream inverse-kinematics
