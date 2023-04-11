@@ -63,11 +63,14 @@ def get_fixed(movable):
 def ExecuteActions(plan):
     '''Iterate through the plan, simulating each action'''
     for name, args in plan:
+        # preprocessing yay
         pb_robot.viz.remove_all_debug()
         bodyNames = [args[i].get_name() for i in range(len(args)) if isinstance(args[i], pb_robot.body.Body)]
         txt = '{} - {}'.format(name, bodyNames)
         pb_robot.viz.add_text(txt, position=(0, 0.25, 0.5), size=2)
 
+        # don't do these things for actions that don't do robot stuff
+        # make things magically appear and disappear instead
         executionItems = args[-1]
         for e in executionItems:
             print(e)

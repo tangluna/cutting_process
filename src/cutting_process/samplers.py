@@ -48,13 +48,14 @@ def backOutKin(arm, q_end, direction_out, grasp=None, fixed=[]):
 
 #####################################################################
 
-def split_object(o): ## can get o's attribs? can add predicates here? aaaa
+def split_object(o, p): ## can get o's attribs? can add predicates here? aaaa
     curr_path = os.getcwd() # poses and things
     models_path = os.path.join(os.path.dirname(curr_path), 'models')
     potato_file = os.path.join(models_path, 'cucumber.urdf')
     potato1 = pb_robot.body.createBody(potato_file)
-    potato2 = pb_robot.body.createBody(potato_file)
-    return (potato1, potato2) # add to visualizer??? is this pddl adding???
+    #potato2 = pb_robot.body.createBody(potato_file)
+    potato1.set_transform(p.pose)
+    return (potato1,) # add to visualizer???
 
 
 def pose_collision_test(o1, p1, o2, p2):

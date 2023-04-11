@@ -73,6 +73,7 @@ def pddlstream_from_problem(robots, movable):
  
     goal = ('and', ('Sliced', movable[0])) # how to add things to goal that come from stream?
     #goal = ('and', ('On', movable[0], fixed[0]))
+    #goal state is derived predicate!
 
     stream_map = {
         'sample-pose': from_fn(cutting_process.samplers.get_stable_gen(fixed)),
@@ -85,7 +86,7 @@ def pddlstream_from_problem(robots, movable):
         'test-pose-cfree': from_test(cutting_process.samplers.pose_collision_test),
         'test-traj-cfree': from_test(cutting_process.samplers.traj_collision_test),
         'test-grasp-stable': from_test(cutting_process.samplers.test_grasp_stability),
-        'generate-cut-objects': from_fn(cutting_process.samplers.split_object) # why are some called with things, some w/o, and some not even f'ns?
+        'generate-cut-objects': from_fn(cutting_process.samplers.split_object)
     }
 
     return domain_pddl, constant_map, stream_pddl, stream_map, init, goal
@@ -124,7 +125,7 @@ if __name__ == '__main__':
     else:
         saved_world.restore()
         input("Execute?")
-        cutting_process.util.ExecuteActions(plan)
+        #cutting_process.util.ExecuteActions(plan)
         IPython.embed()
 
     input('Finish?')

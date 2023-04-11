@@ -20,11 +20,11 @@
     :certified (Grasp ?a ?o ?g)
   )
   (:stream generate-cut-objects ; more potatoes!!!
-    :inputs (?o)
-    :domain (and (Cuttable ?o))
-    :outputs (?oh1 ?oh2)
-    :certified (and (Cuttable ?oh1) ;(Stackable ?oh1) ; stackable is being sus :( how add in all surfaces without python?
-                    (Cuttable ?oh2) ;ADD OTHER RELAVENT PREDICATES
+    :inputs (?o ?p)
+    :domain (and (Cuttable ?o) (Pose ?o ?p))
+    :outputs (?oh1)
+    :certified (and (Cuttable ?oh1) (Movable ?oh1) (Graspable ?oh1) ;(Stackable ?oh1); stackable is being sus :( how add in all surfaces without python?
+    ;                (Cuttable ?oh2) ;ADD OTHER RELAVENT PREDICATES
                     ) ; need to add Pose / AtPose?
   )
   (:stream inverse-kinematics

@@ -45,7 +45,7 @@
 
   (:action move_free
     :parameters (?a ?q1 ?q2 ?t)
-    :precondition (and (Arm ?a) (HandEmpty ?a) (CanMove)
+    :precondition (and (Arm ?a) (HandEmpty ?a) (CanMove) ; disables moving twice in a row (b/c can smash both moves together) think optimization
                        (Conf ?q1) (AtConf ?a ?q1)
                        (not (UnsafeTrajObj ?a ?t))
                        (FreeMotion ?a ?q1 ?t ?q2))
@@ -91,24 +91,29 @@
                  (CanMove))
   )
   (:action slice_cut
-    :parameters (?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t 
+    :parameters (
+      ;?a ?knife 
+      ?o 
+      ;?g 
+      ?p 
+      ;?w1 ?w2 ?q0 ?q1 ?t 
     ?oh1 
-    ?oh2
+  ;  ?oh2
     )
     ; if param in neither precond or eff, wont assign it anything
-    :precondition (and (Arm ?a) 
-                       (Knife ?knife) 
+    :precondition (and ;(Arm ?a) 
+                       ;(Knife ?knife) 
                        (Cuttable ?o)
                        (InWorld ?o)
-                       (Conf ?q0) (AtConf ?a ?q0)
-                       (Grasp ?a ?knife ?g) (AtGrasp ?a ?knife ?g) 
-                       (StableHolding ?knife ?w1) (StableHolding ?knife ?w2)
+                       ;(Conf ?q0) (AtConf ?a ?q0)
+                       ;(Grasp ?a ?knife ?g) (AtGrasp ?a ?knife ?g) 
+                       ;(StableHolding ?knife ?w1) (StableHolding ?knife ?w2)
                        (Pose ?o ?p) (AtPose ?o ?p)
-                       (SliceCutWrenches ?knife ?o ?w1 ?w2)
-                       (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t)
+                       ;(SliceCutWrenches ?knife ?o ?w1 ?w2)
+                       ;(SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t)
                        (not (InWorld ?oh1))
-                       (not (InWorld ?oh2))
-    ;                   (Cuttable ?oh1)
+                       ;(not (InWorld ?oh2))
+                       (Cuttable ?oh1)
     ;                   (Cuttable ?oh2)
                        )
     :effect (and (Sliced ?o)
@@ -122,8 +127,8 @@
                  ; (exists ())               ; new pieces (2) sampler will give object that now exists
                                            ; new pieces are "from" old object
                                            ; TODO later: length things?
-                 (not (AtConf ?a ?q0)) 
-                 (AtConf ?a ?q1) 
+                 ;(not (AtConf ?a ?q0)) 
+                 ;(AtConf ?a ?q1) 
                  (CanMove))
   )
   (:derived (On ?o ?r)
