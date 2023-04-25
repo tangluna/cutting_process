@@ -71,7 +71,9 @@ def pddlstream_from_problem(robots, movable):
     init += [('Wrench', down_wrench), ('Wrench', across_wrench)]
     init += [('SliceCutWrenches', movable[1], movable[0], down_wrench, across_wrench)]
  
+    goal = ('and', ('NeedSlice', movable[0])) # how to add things to goal that come from stream?
     goal = ('and', ('Sliced', movable[0])) # how to add things to goal that come from stream?
+
     #goal = ('and', ('On', movable[0], fixed[0]))
     #goal state is derived predicate!
 
@@ -125,6 +127,7 @@ if __name__ == '__main__':
     else:
         saved_world.restore()
         input("Execute?")
+        # this can be commented out! (line below)
         #cutting_process.util.ExecuteActions(plan)
         IPython.embed()
 

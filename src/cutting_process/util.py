@@ -71,7 +71,12 @@ def ExecuteActions(plan):
 
         # don't do these things for actions that don't do robot stuff
         # make things magically appear and disappear instead
-        executionItems = args[-1]
+        print(name)
+        print(args)
+        
+        executionItems = args[-1] # is this the trajectory?
+        # trajectory can include things that are not movements?
+        # or is trajectory just always the last one?
         for e in executionItems:
             print(e)
             e.simulate()
