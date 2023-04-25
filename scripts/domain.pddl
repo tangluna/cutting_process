@@ -13,7 +13,7 @@
     (From ?o ?o)
     (InWorld ?o)
     (NeedSlice ?o)
-    (CutFrom ?o ?p ?oh1)
+    (CutFrom ?o ?p ?h1)
 
     (On ?o ?r)
     (Holding ?a ?o)
@@ -93,20 +93,8 @@
                  (CanMove))
   )
   (:action slice_move
-    :parameters (
-      ?a
-      ?knife
-      ?o
-      ?g
-      ?p
-      ?w1
-      ?w2
-      ?q0
-      ;?q1
-      ;?t
-    )
-    :precondition (and 
-                    (Arm ?a) 
+    :parameters (?a ?knife ?o ?g ?p ?w1 ?w2 ?q0) ; ?q1 ?t
+    :precondition (and (Arm ?a) 
                       (Knife ?knife) 
                       (Cuttable ?o)
                       (InWorld ?o)
@@ -118,36 +106,18 @@
                       ;(SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t)
     )
     :effect (and (not (AtConf ?a ?q0)) 
-    ;              (AtConf ?a ?q1)
-                  (NeedSlice ?o)
+                ;(AtConf ?a ?q1)
+                 (NeedSlice ?o)
     )
   )
   (:action slice_object
-    :parameters (
-      ?o 
-      ?p
-      ;?oh1 
-  ;    ?oh2
-    )
-    ; if param in neither precond or eff, wont assign it anything
+    :parameters (?o ?p ?h1) ; ?oh2
     :precondition (and (Cuttable ?o) ;(InWorld ?o) 
                        (Pose ?o ?p) (AtPose ?o ?p)
                        (NeedSlice ?o)
-                       ;(CutFrom ?o ?p ?oh1)
+                       (CutFrom ?o ?p ?h1)
                        )
     :effect (and (Sliced ?o)
-                 (not (InWorld ?o)) ; also negate poses????
-                ;; (InWorld ?oh1)
-  ;               (InWorld ?oh2)
-                 ;(not (Stackable ?o)) ; stackable sus. fix later
-  ;               (From ?oh1 ?o) ; flipping???
-  ;               (From ?oh2 ?o) ; order?
-                 ; (not (?o))                ; old object DNE --- negate all of the facts associated with it -- think abt what facts need
-                 ; (exists ())               ; new pieces (2) sampler will give object that now exists
-                                           ; new pieces are "from" old object
-                                           ; TODO later: length things?
-                 ;(not (AtConf ?a ?q0)) 
-                 ;(AtConf ?a ?q1) 
                  (CanMove)
            )
   )

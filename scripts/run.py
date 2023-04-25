@@ -71,7 +71,7 @@ def pddlstream_from_problem(robots, movable):
     init += [('Wrench', down_wrench), ('Wrench', across_wrench)]
     init += [('SliceCutWrenches', movable[1], movable[0], down_wrench, across_wrench)]
  
-    goal = ('and', ('NeedSlice', movable[0])) # how to add things to goal that come from stream?
+    #goal = ('and', ('NeedSlice', movable[0])) # how to add things to goal that come from stream?
     goal = ('and', ('Sliced', movable[0])) # how to add things to goal that come from stream?
 
     #goal = ('and', ('On', movable[0], fixed[0]))
@@ -88,7 +88,7 @@ def pddlstream_from_problem(robots, movable):
         'test-pose-cfree': from_test(cutting_process.samplers.pose_collision_test),
         'test-traj-cfree': from_test(cutting_process.samplers.traj_collision_test),
         'test-grasp-stable': from_test(cutting_process.samplers.test_grasp_stability),
-        'generate-cut-objects': from_fn(cutting_process.samplers.split_object)
+        'generate-cut-objects': from_fn(cutting_process.samplers.split_object),
     }
 
     return domain_pddl, constant_map, stream_pddl, stream_map, init, goal

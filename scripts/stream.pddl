@@ -19,15 +19,23 @@
     :outputs (?g) ; we tell what this is ground to! pddl doesn't choose! these outputs correspond to python function -- pddl only sees that grounded facts exist
     :certified (Grasp ?a ?o ?g)
   )
-  (:stream generate-cut-objects ; more potatoes!!!
+
+  ;(:stream generate-cut-objects ; more potatoes!!!
+  ;  :inputs (?o ?p)
+  ;  :domain (and (Cuttable ?o) (Pose ?o ?p))
+  ;  :outputs (?oh)
+  ;  :certified (and ;(Cuttable ?oh) ;(Movable ?oh1) (Graspable ?oh1) ;(Stackable ?oh1); stackable is being sus :( how add in all surfaces without python?
+  ;  ;                (Cuttable ?oh2) ;ADD OTHER RELAVENT PREDICATES
+  ;                (CutFrom ?o ?p ?oh)
+  ;  ; add in some intuition of "CutFrom" or something that relates ?o and ?oh1
+  ;                  ) ; need to add Pose / AtPose?
+  ;)
+    
+  (:stream generate-cut-objects
     :inputs (?o ?p)
     :domain (and (Cuttable ?o) (Pose ?o ?p))
-    :outputs (?oh)
-    :certified (and ;(Cuttable ?oh) ;(Movable ?oh1) (Graspable ?oh1) ;(Stackable ?oh1); stackable is being sus :( how add in all surfaces without python?
-    ;                (Cuttable ?oh2) ;ADD OTHER RELAVENT PREDICATES
-                  (CutFrom ?o ?p ?oh)
-    ; add in some intuition of "CutFrom" or something that relates ?o and ?oh1
-                    ) ; need to add Pose / AtPose?
+    :outputs (?h1)
+    :certified (and (CutFrom ?o ?p ?h1) (Cuttable ?h1))
   )
   (:stream inverse-kinematics
     :inputs (?a ?o ?p ?g)
