@@ -5,10 +5,43 @@
 Various utility functions
 '''
 
+import os
 import random
 import numpy
 import pb_robot
 from tsr.tsr import TSR, TSRChain
+
+class VanishBody(object):
+    def __init__(self, body):
+        self.body = body
+    def simulate(self):
+        self.body.remove_body()
+    def execute(self, realRobot=None):
+       # dictPath = [realRobot.convertToDict(q) for q in self.path]
+       # realRobot.execute_position_path(dictPath)
+       pass #todo
+    def __repr__(self):
+        return 'vanish{}'.format(id(self) % 1000)
+    
+class CreateHalves(object):
+    def __init__(self, transform):
+        self.transform = transform
+    def simulate(self):
+        print("vanished potato transform")
+        print(self.transform)
+        curr_path = os.getcwd()
+        models_path = os.path.join(os.path.dirname(curr_path), 'models')
+
+        potato_file = os.path.join(models_path, 'cucumber.urdf')
+        potato = pb_robot.body.createBody(potato_file)
+
+        potato.set_transform(self.transform)
+    def execute(self, realRobot=None):
+       # dictPath = [realRobot.convertToDict(q) for q in self.path]
+       # realRobot.execute_position_path(dictPath)
+       pass #todo
+    def __repr__(self):
+        return 'createHalves{}'.format(id(self) % 1000)
 
 def SampleTSRForPose(tsr_chain):
     '''Shortcutting function for randomly samping a 
@@ -77,7 +110,8 @@ def ExecuteActions(plan):
         executionItems = args[-1] # is this the trajectory?
         # trajectory can include things that are not movements?
         # or is trajectory just always the last one?
-        for e in executionItems:
-            print(e)
-            e.simulate()
-            input("Next?")
+        if name != "slice_move": #fix fix
+            for e in executionItems:
+                print(e)
+                e.simulate()
+                input("Next?")

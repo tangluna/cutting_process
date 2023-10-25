@@ -49,14 +49,7 @@ def backOutKin(arm, q_end, direction_out, grasp=None, fixed=[]):
 #####################################################################
 
 def split_object(o, p): ## can get o's attribs? can add predicates here? aaaa
-    curr_path = os.getcwd() # poses and things
-    models_path = os.path.join(os.path.dirname(curr_path), 'models')
-    potato_file = os.path.join(models_path, 'cucumber.urdf')
-    potato1 = pb_robot.body.createBody(potato_file)
-    #potato2 = pb_robot.body.createBody(potato_file)
-    potato1.set_transform(p.pose)
-    return (potato1,) # add to visualizer???
-
+    return ([cutting_process.util.VanishBody(o), cutting_process.util.CreateHalves(o.get_transform())],)
 
 def pose_collision_test(o1, p1, o2, p2):
     '''Check if object o1 (at pose p1) is in collision with object o2 (at pose p2)'''

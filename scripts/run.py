@@ -128,7 +128,7 @@ if __name__ == '__main__':
         saved_world.restore()
         input("Execute?")
         # this can be commented out! (line below)
-        #cutting_process.util.ExecuteActions(plan)
+        cutting_process.util.ExecuteActions(plan)
         IPython.embed()
 
     input('Finish?')
