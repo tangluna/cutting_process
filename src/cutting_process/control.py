@@ -79,7 +79,7 @@ def generateCartPathFromWrench(wrench, obj_tform, dist=0.1, n=3):
 
     # Generate path based on largest force
     incMove = numpy.eye(4)
-    motionLinearDir = numpy.argmax(map(abs, wrench.ft_objF[0:3]))
+    motionLinearDir = numpy.argmax(list(map(abs, wrench.ft_objF[0:3])))
     incMove[motionLinearDir, 3] = (dist/n)*numpy.sign(wrench.ft_objF[motionLinearDir])
     # Remove this direction so it isnt used to generate "force"
     linearDirs = linearDirs[linearDirs != motionLinearDir]

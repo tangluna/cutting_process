@@ -21,7 +21,7 @@ def getObjRelations(body1, body2, body2_pose=None):
         if 'knife' in body2.get_name():
             tsr = pb_robot.tsrs.panda_tool_handle.handle_grasp(body2)
         elif 'potato' in body2.get_name():
-            tsr = pb_robot.tsrs.panda_box.grasp(body2) 
+            tsr = pb_robot.tsrs.panda_shapes.grasp_box(body2) # <- HERE
         else:
             raise NotImplementedError("No grasp set defined for {}".format(body2.get_name()))
 

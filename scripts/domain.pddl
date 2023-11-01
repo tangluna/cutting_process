@@ -189,5 +189,5 @@
   (:derived (SlicesInWorld ?o)
       (exists (?h1 ?h2) (and (Sliced ?o) (SlicedFrom ?o ?h1) (SlicedFrom ?o ?h2) (InWorld ?h1) (InWorld ?h2)))) ; what ensures h1 and h2 aren't the same? 
   (:derived (DicePileInWorld ?o)
-      (exists (?l) (and (Diced ?o) (DicedFrom ?o ?l) (Pile ?l) (InWorld ?l))))
+      (exists (?l) (and (Diced ?o) (DicedFrom ?o ?l) (Pile ?l) (InWorld ?l)))) ; most old ancestor?
 )
