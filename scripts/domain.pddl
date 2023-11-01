@@ -13,7 +13,7 @@
     (From ?o ?o)
     (InWorld ?o)
     (NeedSlice ?o)
-    (CutFrom ?o ?p ?h1)
+    (CutFrom ?o ?h)
 
     (On ?o ?r)
     (Holding ?a ?o)
@@ -44,6 +44,7 @@
     (SliceCutWrenches ?knife ?o ?w1 ?w2)
     (SliceCutKin ?a ?knife ?o ?g ?p0 ?w1 ?w2 ?q0 ?q1 ?t)
     (ValidCutEffect ?h1 ?h2 ?t)
+    (SlicesInWorld ?o)
   )
 
   (:action move_free
@@ -116,8 +117,8 @@
     :precondition (and (Cuttable ?o) (InWorld ?o) 
                        (Pose ?o ?p) (AtPose ?o ?p)
                        (NeedSlice ?o)
-                       (CutFrom ?o ?p ?h1)
-                       (CutFrom ?o ?p ?h2) ; does something ensure h1 and h2 aren't the same?
+                       (CutFrom ?o ?h1)
+                       (CutFrom ?o ?h2) ; does something ensure h1 and h2 aren't the same?
                        (ValidCutEffect ?h1 ?h2 ?t) ; aaa? hacky?
                        )
     :effect (and (Sliced ?o)
@@ -143,4 +144,6 @@
       (exists (?o ?p) (and (Pose ?o ?p) (AtPose ?o ?p) 
                            (not (Holding ?r ?o))
                            (not (ObjCFreeTraj ?r ?t ?o ?p)))))
+  (:derived (SlicesInWorld ?o)
+      (exists (?h1 ?h2) (and (Sliced ?o) (CutFrom ?o ?h1) (CutFrom ?o ?h2) (InWorld ?h1) (InWorld ?h2)))) ; what ensures h1 and h2 aren't the same?
 )

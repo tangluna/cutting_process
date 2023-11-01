@@ -32,6 +32,8 @@ class CreateHalves(object):
         curr_path = os.getcwd()
         models_path = os.path.join(os.path.dirname(curr_path), 'models')
 
+        # TODO 2 new potatoes not same potato
+        
         potato_file = os.path.join(models_path, 'cucumber.urdf')
         potato = pb_robot.body.createBody(potato_file)
 

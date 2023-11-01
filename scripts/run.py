@@ -71,9 +71,9 @@ def pddlstream_from_problem(robots, movable):
     init += [('Wrench', down_wrench), ('Wrench', across_wrench)]
     init += [('SliceCutWrenches', movable[1], movable[0], down_wrench, across_wrench)]
  
-    #goal = ('and', ('NeedSlice', movable[0])) # how to add things to goal that come from stream?
-    goal = ('and', ('Sliced', movable[0])) # how to add things to goal that come from stream?
-    # is the goal that something is sliced or that we have a sliced piece?
+    goal = ('and', ('SlicesInWorld', movable[0]))
+    # is the goal that something is sliced or that we have a sliced piece? (one piece or two -- currently 2)
+    # stacking this is gonna be hard w/o defining more predicates
 
     #goal = ('and', ('On', movable[0], fixed[0]))
     #goal state is derived predicate!

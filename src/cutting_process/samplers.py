@@ -48,7 +48,7 @@ def backOutKin(arm, q_end, direction_out, grasp=None, fixed=[]):
 
 #####################################################################
 
-def split_object(o, p): ## can get o's attribs? can add predicates here? aaaa
+def split_object(o): ## can get o's attribs? can add predicates here? aaaa
     # todo return actual potatoes?
     # is this possible? is this necessary?
     return (None, None, [cutting_process.util.VanishBody(o), cutting_process.util.CreateHalves(o.get_transform())])
