@@ -110,8 +110,8 @@ def ExecuteActions(plan):
         executionItems = args[-1] # is this the trajectory?
         # trajectory can include things that are not movements?
         # or is trajectory just always the last one?
-        if name != "slice_move": #fix fix
-            for e in executionItems:
-                print(e)
-                e.simulate()
-                input("Next?")
+        #if name != "slice_move": #fix fix
+        for e in executionItems:
+            print(e)
+            e.simulate()
+            input("Next?")
