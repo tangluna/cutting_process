@@ -73,6 +73,7 @@ def pddlstream_from_problem(robots, movable):
  
     #goal = ('and', ('NeedSlice', movable[0])) # how to add things to goal that come from stream?
     goal = ('and', ('Sliced', movable[0])) # how to add things to goal that come from stream?
+    # is the goal that something is sliced or that we have a sliced piece?
 
     #goal = ('and', ('On', movable[0], fixed[0]))
     #goal state is derived predicate!

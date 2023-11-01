@@ -49,7 +49,9 @@ def backOutKin(arm, q_end, direction_out, grasp=None, fixed=[]):
 #####################################################################
 
 def split_object(o, p): ## can get o's attribs? can add predicates here? aaaa
-    return ([cutting_process.util.VanishBody(o), cutting_process.util.CreateHalves(o.get_transform())],)
+    # todo return actual potatoes?
+    # is this possible? is this necessary?
+    return (None, None, [cutting_process.util.VanishBody(o), cutting_process.util.CreateHalves(o.get_transform())])
 
 def pose_collision_test(o1, p1, o2, p2):
     '''Check if object o1 (at pose p1) is in collision with object o2 (at pose p2)'''

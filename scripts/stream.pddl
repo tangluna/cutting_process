@@ -34,8 +34,10 @@
   (:stream generate-cut-objects
     :inputs (?o ?p)
     :domain (and (Cuttable ?o) (Pose ?o ?p))
-    :outputs (?h1)
-    :certified (and (CutFrom ?o ?p ?h1) (Cuttable ?h1))
+    :outputs (?h1 ?h2 ?t)
+    :certified (and (CutFrom ?o ?p ?h1) (Cuttable ?h1)
+                    (CutFrom ?o ?p ?h2) (Cuttable ?h2)
+                    (ValidCutEffect ?h1 ?h2 ?t))
   )
   (:stream inverse-kinematics
     :inputs (?a ?o ?p ?g)

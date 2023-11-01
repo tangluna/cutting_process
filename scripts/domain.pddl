@@ -43,6 +43,7 @@
     (Sliced ?o)
     (SliceCutWrenches ?knife ?o ?w1 ?w2)
     (SliceCutKin ?a ?knife ?o ?g ?p0 ?w1 ?w2 ?q0 ?q1 ?t)
+    (ValidCutEffect ?h1 ?h2 ?t)
   )
 
   (:action move_free
@@ -111,14 +112,19 @@
     )
   )
   (:action slice_object
-    :parameters (?o ?p ?h1) ; ?oh2
-    :precondition (and (Cuttable ?o) ;(InWorld ?o) 
+    :parameters (?o ?p ?h1 ?h2 ?t) ; t here isn't a robot movement
+    :precondition (and (Cuttable ?o) (InWorld ?o) 
                        (Pose ?o ?p) (AtPose ?o ?p)
                        (NeedSlice ?o)
                        (CutFrom ?o ?p ?h1)
+                       (CutFrom ?o ?p ?h2) ; does something ensure h1 and h2 aren't the same?
+                       (ValidCutEffect ?h1 ?h2 ?t) ; aaa? hacky?
                        )
     :effect (and (Sliced ?o)
                  (CanMove)
+                 (not (InWorld ?o))
+                 (InWorld ?h1)
+                 (InWorld ?h2)
            )
   )
   (:derived (On ?o ?r)
