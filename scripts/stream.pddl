@@ -31,12 +31,12 @@
   ;                  ) ; need to add Pose / AtPose?
   ;)
     
-  (:stream generate-cut-objects
+  (:stream generate-sliced-objects
     :inputs (?o)
     :domain (and (Cuttable ?o)) ; shoudl this have an InWorld?
     :outputs (?h1 ?h2 ?t)
-    :certified (and (CutFrom ?o ?h1) (Cuttable ?h1)
-                    (CutFrom ?o ?h2) (Cuttable ?h2)
+    :certified (and (SlicedFrom ?o ?h1) (Cuttable ?h1)
+                    (SlicedFrom ?o ?h2) (Cuttable ?h2)
                     (ValidCutEffect ?h1 ?h2 ?t))
   )
   (:stream inverse-kinematics

@@ -13,7 +13,7 @@
     (From ?o ?o)
     (InWorld ?o)
     (NeedSlice ?o)
-    (CutFrom ?o ?h)
+    (SlicedFrom ?o ?h)
 
     (On ?o ?r)
     (Holding ?a ?o)
@@ -45,6 +45,11 @@
     (SliceCutKin ?a ?knife ?o ?g ?p0 ?w1 ?w2 ?q0 ?q1 ?t)
     (ValidCutEffect ?h1 ?h2 ?t)
     (SlicesInWorld ?o)
+
+  ;  (Pile ?l) ; piles are not cuttable or graspable but are movable?
+  ;  (DicedFrom ?o ?l)
+  ;  (Diced ?o)
+  ;  (DicePileInWorld ?o)
   )
 
   (:action move_free
@@ -117,17 +122,50 @@
     :precondition (and (Cuttable ?o) (InWorld ?o) 
                        (Pose ?o ?p) (AtPose ?o ?p)
                        (NeedSlice ?o)
-                       (CutFrom ?o ?h1)
-                       (CutFrom ?o ?h2) ; does something ensure h1 and h2 aren't the same?
+                       (SlicedFrom ?o ?h1)
+                       (SlicedFrom ?o ?h2) ; does something ensure h1 and h2 aren't the same?
                        (ValidCutEffect ?h1 ?h2 ?t) ; aaa? hacky?
                        )
     :effect (and (Sliced ?o)
                  (CanMove)
                  (not (InWorld ?o))
                  (InWorld ?h1)
-                 (InWorld ?h2)
+                 (InWorld ?h2) ; is this all the attributes a sliced object should have?
            )
   )
+;  (:action dice_move
+;    :parameters (?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t)
+;    :precondition (and (Arm ?a) 
+;                      (Knife ?knife) 
+;                      (Cuttable ?o)
+;                      (InWorld ?o)
+;                      (Conf ?q0) (AtConf ?a ?q0)
+;                      (Grasp ?a ?knife ?g) (AtGrasp ?a ?knife ?g)
+;                      (StableHolding ?knife ?w1) (StableHolding ?knife ?w2)
+;                      (Pose ?o ?p) (AtPose ?o ?p)
+;                      (SliceCutWrenches ?knife ?o ?w1 ?w2) ; TODO update
+;                      (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t) ; TODO update
+;    )
+;    :effect (and (not (AtConf ?a ?q0)) 
+;                (AtConf ?a ?q1)
+;                 (NeedDice ?o)
+;    )
+;  )
+;  (:action dice_object
+;    :parameters (?o ?p ?l ?t) ; t here isn't a robot movement
+;    :precondition (and (Cuttable ?o) (InWorld ?o) 
+;                       (Pose ?o ?p) (AtPose ?o ?p)
+;                       (NeedDice ?o)
+;                       (Pile ?l)
+;                       (DicedFrom ?o ?l)
+;                       (ValidCutEffect ?h1 ?h2 ?t) ; update to dice
+;                       )
+;    :effect (and (Diced ?o)
+;                 (CanMove)
+;                 (not (InWorld ?o))
+;                 (InWorld ?l)
+;           )
+;  )
   (:derived (On ?o ?r)
     (exists (?p) (and (Supported ?o ?p ?r) (AtPose ?o ?p)))
   )
@@ -145,5 +183,8 @@
                            (not (Holding ?r ?o))
                            (not (ObjCFreeTraj ?r ?t ?o ?p)))))
   (:derived (SlicesInWorld ?o)
-      (exists (?h1 ?h2) (and (Sliced ?o) (CutFrom ?o ?h1) (CutFrom ?o ?h2) (InWorld ?h1) (InWorld ?h2)))) ; what ensures h1 and h2 aren't the same?
+      (exists (?h1 ?h2) (and (Sliced ?o) (SlicedFrom ?o ?h1) (SlicedFrom ?o ?h2) (InWorld ?h1) (InWorld ?h2)))) ; what ensures h1 and h2 aren't the same?
+  
+  ;(:derived (DicePileInWorld ?o)
+  ;    (exists ?l) (and (Diced ?o) (DicedFrom ?o ?l) (Pile ?l) (InWorld ?l)))
 )

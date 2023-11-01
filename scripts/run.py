@@ -89,7 +89,7 @@ def pddlstream_from_problem(robots, movable):
         'test-pose-cfree': from_test(cutting_process.samplers.pose_collision_test),
         'test-traj-cfree': from_test(cutting_process.samplers.traj_collision_test),
         'test-grasp-stable': from_test(cutting_process.samplers.test_grasp_stability),
-        'generate-cut-objects': from_fn(cutting_process.samplers.split_object),
+        'generate-sliced-objects': from_fn(cutting_process.samplers.split_object),
     }
 
     return domain_pddl, constant_map, stream_pddl, stream_map, init, goal
