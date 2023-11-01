@@ -52,6 +52,8 @@
     (DicePileInWorld ?o)
     (NeedDice ?o)
     (ValidDiceEffect ?l ?t)
+    (DiceCutWrench ?knife ?o ?w)
+    (DiceCutKin ?a ?knife ?o ?g ?p0 ?w ?q0 ?q1 ?t)
   )
 
   (:action move_free
@@ -136,17 +138,17 @@
            )
   )
   (:action dice_move
-    :parameters (?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t)
+    :parameters (?a ?knife ?o ?g ?p ?w ?q0 ?q1 ?t)
     :precondition (and (Arm ?a) 
                       (Knife ?knife) 
                       (Cuttable ?o)
                       (InWorld ?o)
                       (Conf ?q0) (AtConf ?a ?q0)
                       (Grasp ?a ?knife ?g) (AtGrasp ?a ?knife ?g)
-                      (StableHolding ?knife ?w1) (StableHolding ?knife ?w2)
+                      (StableHolding ?knife ?w)
                       (Pose ?o ?p) (AtPose ?o ?p)
-                      (SliceCutWrenches ?knife ?o ?w1 ?w2) ; TODO update
-                      (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t) ; TODO update
+                      (DiceCutWrench ?knife ?o ?w)
+                      (DiceCutKin ?a ?knife ?o ?g ?p ?w ?q0 ?q1 ?t)
     )
     :effect (and (not (AtConf ?a ?q0)) 
                 (AtConf ?a ?q1)

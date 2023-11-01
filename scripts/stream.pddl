@@ -77,6 +77,12 @@
     :outputs (?q0 ?q1 ?t)
     :certified (and (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t) (Conf ?q0) (Conf ?q1) (Traj ?t))
   )
+    (:stream plan-dice-cut-motion
+    :inputs (?a ?knife ?o ?g ?p ?w)
+    :domain (and (Arm ?a) (Knife ?knife) (Cuttable ?o) (Grasp ?a ?knife ?g) (Pose ?o ?p) (Wrench ?w))
+    :outputs (?q0 ?q1 ?t)
+    :certified (and (DiceCutKin ?a ?knife ?o ?g ?p ?w ?q0 ?q1 ?t) (Conf ?q0) (Conf ?q1) (Traj ?t))
+  )
   (:stream test-pose-cfree
     :inputs (?o1 ?p1 ?o2 ?p2)
     :domain (and (Pose ?o1 ?p1) (Pose ?o2 ?p2))

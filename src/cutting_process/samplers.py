@@ -306,3 +306,60 @@ def slice_cut(fixed=[]):
             return (conf_start, q_startFollow1, command,) # returns end config too!
         return None
     return fn
+
+# TODO comments
+def dice_cut(fixed=[]):
+    '''Generate a function for planning the slicing motion'''
+    def fn(arm, knife, obj, grasp, obj_pose, w):
+        '''For arm, use knife (held by grasp) to cut obj (located at obj_pose) by slicing with wrenches w1 and w2'''
+
+        for _ in range(5): 
+
+            mating_worldF = cutting_process.generators.getObjRelations(knife, obj, body2_pose=obj_pose.pose)
+            mating_objF = numpy.dot(numpy.linalg.inv(obj_pose.pose), mating_worldF)
+
+            ###################
+            # First Wrench Path
+            ###################
+            obj_aabb = pb_robot.aabb.get_aabb(obj)
+            height = pb_robot.aabb.get_aabb_extent(obj_aabb)[2]
+            resulting0 = cutting_process.control.generateCartPathFromWrench(w, obj_pose.pose, dist=1.6*height) 
+            if resulting0 is None: continue 
+            (path_thru_obj0, start_obj_pose0, stiffness0) = resulting0
+            tool_path0 = cutting_process.util.actionPath_hand(path_thru_obj0, mating_objF)
+            cart_hand_path0 = cutting_process.util.actionPath_hand(tool_path0, grasp.grasp_objF)
+
+            approxJointPath0 = cutting_process.control.findStartIK(arm, cart_hand_path0, fixed=fixed)
+            if approxJointPath0 is None:
+                if DEBUG_FAILURE: print('Cant Find first Cartesian Path')
+                continue 
+       
+            start_tool_pose0 = numpy.dot(start_obj_pose0, mating_objF)
+            start_pose0 = numpy.dot(start_tool_pose0, grasp.grasp_objF)
+            q_startFollow0 = arm.ComputeIK(start_pose0, seed_q=approxJointPath0[0])
+            if q_startFollow0 is None:
+                if DEBUG_FAILURE: print('No IK: q_startfollow0')
+                continue 
+
+            q_preStartFollow = backInKin(arm, q_startFollow0, [0, 0.03, 0], grasp, fixed)
+            q_postEndFollow = backOutKin(arm, approxJointPath0[-1], [0, 0.03, 0], grasp, fixed)
+            if q_preStartFollow is None or q_postEndFollow is None: 
+                continue 
+
+            # Package up all variables to return
+            conf_start = pb_robot.vobj.BodyConf(arm, q_preStartFollow)
+            conf_end = pb_robot.vobj.BodyConf(arm, q_postEndFollow)
+            #pb_robot.arm.SetJointValues(q_startFollow0)
+
+            command = [pb_robot.vobj.MoveToTouch(arm, q_preStartFollow, q_startFollow0),
+                       pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow0, ee_path=cart_hand_path0, stiffness=stiffness0),
+                       pb_robot.vobj.MoveFromTouch(arm, q_preStartFollow),
+                       pb_robot.vobj.MoveToTouch(arm, q_preStartFollow, q_startFollow0),
+                       pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow0, ee_path=cart_hand_path0, stiffness=stiffness0),
+                       pb_robot.vobj.MoveFromTouch(arm, q_postEndFollow)
+                       ]
+            pb_robot.viz.remove_all_debug()
+
+            return (conf_start, q_postEndFollow, command,) # returns end config too!
+        return None
+    return fn

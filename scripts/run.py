@@ -70,6 +70,7 @@ def pddlstream_from_problem(robots, movable):
     across_wrench = pb_robot.vobj.BodyWrench(movable[0], [0.5, 0, -0.1, 0, 0, 0])
     init += [('Wrench', down_wrench), ('Wrench', across_wrench)]
     init += [('SliceCutWrenches', movable[1], movable[0], down_wrench, across_wrench)]
+    init += [('DiceCutWrench', movable[1], movable[0], down_wrench)]
  
     #goal = ('and', ('SlicesInWorld', movable[0]))
     goal = ('and', ('DicePileInWorld', movable[0]))
@@ -87,6 +88,7 @@ def pddlstream_from_problem(robots, movable):
         'plan-holding-motion': from_fn(cutting_process.samplers.get_holding_motion_gen(fixed)),
         'sample-force-grasp': from_fn(cutting_process.samplers.get_stable_grasp_gen()),
         'plan-slice-cut-motion': from_fn(cutting_process.samplers.slice_cut(fixed)),
+        'plan-dice-cut-motion': from_fn(cutting_process.samplers.dice_cut(fixed)),
         'test-pose-cfree': from_test(cutting_process.samplers.pose_collision_test),
         'test-traj-cfree': from_test(cutting_process.samplers.traj_collision_test),
         'test-grasp-stable': from_test(cutting_process.samplers.test_grasp_stability),
