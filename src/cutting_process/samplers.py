@@ -53,6 +53,11 @@ def split_object(o): ## can get o's attribs? can add predicates here? aaaa
     # is this possible? is this necessary?
     return (None, None, [cutting_process.util.VanishBody(o), cutting_process.util.CreateHalves(o.get_transform())])
 
+def make_pile_from(o):
+    # todo return actual pile?
+    # is this possible? is this necessary?
+    return (None, [cutting_process.util.VanishBody(o), cutting_process.util.CreatePile(o.get_transform())])
+
 def pose_collision_test(o1, p1, o2, p2):
     '''Check if object o1 (at pose p1) is in collision with object o2 (at pose p2)'''
     o1_og = o1.get_transform()

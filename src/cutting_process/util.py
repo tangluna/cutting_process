@@ -33,7 +33,7 @@ class CreateHalves(object):
         models_path = os.path.join(os.path.dirname(curr_path), 'models')
 
         # TODO 2 new potatoes not same potato
-        
+
         potato_file = os.path.join(models_path, 'cucumber.urdf')
         potato = pb_robot.body.createBody(potato_file)
 
@@ -44,6 +44,24 @@ class CreateHalves(object):
        pass #todo
     def __repr__(self):
         return 'createHalves{}'.format(id(self) % 1000)
+
+class CreatePile(object):
+    def __init__(self, transform):
+        self.transform = transform
+    def simulate(self):
+        curr_path = os.getcwd()
+        models_path = os.path.join(os.path.dirname(curr_path), 'models')
+
+        # TODO pile not same potato
+        
+        potato_file = os.path.join(models_path, 'cucumber.urdf')
+        potato = pb_robot.body.createBody(potato_file)
+
+        potato.set_transform(self.transform)
+    def execute(self, realRobot=None):
+       pass
+    def __repr__(self):
+        return 'createPile{}'.format(id(self) % 1000)
 
 def SampleTSRForPose(tsr_chain):
     '''Shortcutting function for randomly samping a 

@@ -71,7 +71,8 @@ def pddlstream_from_problem(robots, movable):
     init += [('Wrench', down_wrench), ('Wrench', across_wrench)]
     init += [('SliceCutWrenches', movable[1], movable[0], down_wrench, across_wrench)]
  
-    goal = ('and', ('SlicesInWorld', movable[0]))
+    #goal = ('and', ('SlicesInWorld', movable[0]))
+    goal = ('and', ('DicePileInWorld', movable[0]))
     # is the goal that something is sliced or that we have a sliced piece? (one piece or two -- currently 2)
     # stacking this is gonna be hard w/o defining more predicates
 
@@ -90,6 +91,7 @@ def pddlstream_from_problem(robots, movable):
         'test-traj-cfree': from_test(cutting_process.samplers.traj_collision_test),
         'test-grasp-stable': from_test(cutting_process.samplers.test_grasp_stability),
         'generate-sliced-objects': from_fn(cutting_process.samplers.split_object),
+        'generate-diced-object': from_fn(cutting_process.samplers.make_pile_from),
     }
 
     return domain_pddl, constant_map, stream_pddl, stream_map, init, goal

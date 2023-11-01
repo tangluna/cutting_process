@@ -37,7 +37,15 @@
     :outputs (?h1 ?h2 ?t)
     :certified (and (SlicedFrom ?o ?h1) (Cuttable ?h1)
                     (SlicedFrom ?o ?h2) (Cuttable ?h2)
-                    (ValidCutEffect ?h1 ?h2 ?t))
+                    (ValidSliceEffect ?h1 ?h2 ?t))
+  )
+    (:stream generate-diced-object
+    :inputs (?o)
+    :domain (and (Cuttable ?o)) ; shoudl this have an InWorld?
+    :outputs (?l ?t)
+    :certified (and (Pile ?l)
+                    (DicedFrom ?o ?l)
+                    (ValidDiceEffect ?l ?t)) ; is this all the effects?
   )
   (:stream inverse-kinematics
     :inputs (?a ?o ?p ?g)
