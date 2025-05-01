@@ -34,8 +34,12 @@ def pddlstream_from_problem(robots, movable):
     fixed = cutting_process.util.get_fixed(robots+movable) 
     print('Movable:', [m.get_name() for m in movable])
     print('Fixed:', [f.get_name() for f in fixed])
+
+    # todo -- sanity check preconditions and effects
+
     for body in movable:
         pose = pb_robot.vobj.BodyPose(body, body.get_transform())
+
         init += [('Graspable', body),
                  ('Pose', body, pose),
                  ('AtPose', body, pose), 
@@ -43,7 +47,7 @@ def pddlstream_from_problem(robots, movable):
                  ('InWorld',  body)]
 
         if 'potato' in body.get_name():
-            init += [('Cuttable', body)]
+            init += [('Cuttable', body), ('EarliestAncestor', body, body)]
 
         if 'knife' in body.get_name():
             init += [('Knife', body)]
@@ -72,13 +76,11 @@ def pddlstream_from_problem(robots, movable):
     init += [('SliceCutWrenches', movable[1], movable[0], down_wrench, across_wrench)]
     init += [('DiceCutWrench', movable[1], movable[0], down_wrench)]
  
-    #goal = ('and', ('SlicesInWorld', movable[0]))
-    goal = ('and', ('DicePileInWorld', movable[0]))
-    # is the goal that something is sliced or that we have a sliced piece? (one piece or two -- currently 2)
-    # stacking this is gonna be hard w/o defining more predicates
+    goal = ('and', ('TwoSlicesInWorld', movable[0]))
+    #goal = ('and', ('DicePileInWorld', movable[0]))
+    # todo -- is the goal that something is sliced or that we have a sliced piece? (aka one piece or two -- currently 2)
 
     #goal = ('and', ('On', movable[0], fixed[0]))
-    #goal state is derived predicate!
 
     stream_map = {
         'sample-pose': from_fn(cutting_process.samplers.get_stable_gen(fixed)),
@@ -132,7 +134,6 @@ if __name__ == '__main__':
     else:
         saved_world.restore()
         input("Execute?")
-        # this can be commented out! (line below)
         cutting_process.util.ExecuteActions(plan)
         IPython.embed()
 

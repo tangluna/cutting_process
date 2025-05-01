@@ -5,47 +5,30 @@
     :outputs (?p)
     :certified (and (Pose ?o ?p) (Supported ?o ?p ?r))
   )
-  (:stream sample-grasp ; look a grasp exists
+  (:stream sample-grasp
     :inputs (?a ?o)
-    :domain (and (Arm ?a) (Graspable ?o)) ; this bad. should be object not property --> how make error
-    ; check if obj-effect -- stream-cert is allowed in code
-    ; streams output things that are always true -- add facts to state
-    ; effects set what true in world; can change
-    ; streams -- like look-up book. info doesnt change; only gen ONCE -- so could theoretically precomp but not in cont. world so can't do this bc too many possibilities
-    ;         -- break! yay! -- extends?
-    ; fact added as soon as stream added!
-    ; so need to diff from grasp vs AtGrasp in potato -- piece exists from stream vs exists in world
-    ; goal is derived pred?
-    :outputs (?g) ; we tell what this is ground to! pddl doesn't choose! these outputs correspond to python function -- pddl only sees that grounded facts exist
+    :domain (and (Arm ?a) (Graspable ?o))
+    :outputs (?g)
     :certified (Grasp ?a ?o ?g)
   )
-
-  ;(:stream generate-cut-objects ; more potatoes!!!
-  ;  :inputs (?o ?p)
-  ;  :domain (and (Cuttable ?o) (Pose ?o ?p))
-  ;  :outputs (?oh)
-  ;  :certified (and ;(Cuttable ?oh) ;(Movable ?oh1) (Graspable ?oh1) ;(Stackable ?oh1); stackable is being sus :( how add in all surfaces without python?
-  ;  ;                (Cuttable ?oh2) ;ADD OTHER RELAVENT PREDICATES
-  ;                (CutFrom ?o ?p ?oh)
-  ;  ; add in some intuition of "CutFrom" or something that relates ?o and ?oh1
-  ;                  ) ; need to add Pose / AtPose?
-  ;)
     
-  (:stream generate-sliced-objects
-    :inputs (?o)
-    :domain (and (Cuttable ?o)) ; shoudl this have an InWorld?
+  (:stream generate-sliced-objects ; todo -- sanity check preconditions and effects
+    :inputs (?o ?a)
+    :domain (and (Cuttable ?o) (EarliestAncestor ?a ?o)) ; should this have an InWorld?
     :outputs (?h1 ?h2 ?t)
     :certified (and (SlicedFrom ?o ?h1) (Cuttable ?h1)
                     (SlicedFrom ?o ?h2) (Cuttable ?h2)
-                    (ValidSliceEffect ?h1 ?h2 ?t))
+                    (ValidSliceEffect ?h1 ?h2 ?t)
+                    (EarliestAncestor ?a ?h1)
+                    (EarliestAncestor ?a ?h2))
   )
-    (:stream generate-diced-object
+  (:stream generate-diced-object ; todo -- sanity check preconditions and effects
     :inputs (?o)
-    :domain (and (Cuttable ?o)) ; shoudl this have an InWorld?
+    :domain (and (Cuttable ?o)) ; should this have an InWorld?
     :outputs (?l ?t)
     :certified (and (Pile ?l)
                     (DicedFrom ?o ?l)
-                    (ValidDiceEffect ?l ?t)) ; is this all the effects?
+                    (ValidDiceEffect ?l ?t))
   )
   (:stream inverse-kinematics
     :inputs (?a ?o ?p ?g)
@@ -83,6 +66,10 @@
     :outputs (?q0 ?q1 ?t)
     :certified (and (DiceCutKin ?a ?knife ?o ?g ?p ?w ?q0 ?q1 ?t) (Conf ?q0) (Conf ?q1) (Traj ?t))
   )
+  ;todo -- (:stream plan-knife-push-motion
+  ;:inputs (?a ?knife ?o ?g ?p1 ?p2 ?q1 ?q2 ?t)
+  ;:outputs (?)
+  ;)
   (:stream test-pose-cfree
     :inputs (?o1 ?p1 ?o2 ?p2)
     :domain (and (Pose ?o1 ?p1) (Pose ?o2 ?p2))

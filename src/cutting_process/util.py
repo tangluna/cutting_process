@@ -11,11 +11,12 @@ import numpy
 import pb_robot
 from tsr.tsr import TSR, TSRChain
 
-class VanishBody(object):
+class VanishBody(object): # todo
     def __init__(self, body):
         self.body = body
     def simulate(self):
-        self.body.remove_body()
+        print("vanishing")
+        pass#self.body.remove_body()
     def execute(self, realRobot=None):
        # dictPath = [realRobot.convertToDict(q) for q in self.path]
        # realRobot.execute_position_path(dictPath)
@@ -23,7 +24,7 @@ class VanishBody(object):
     def __repr__(self):
         return 'vanish{}'.format(id(self) % 1000)
     
-class CreateHalves(object):
+class CreateHalves(object): # todo
     def __init__(self, transform):
         self.transform = transform
     def simulate(self):

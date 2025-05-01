@@ -1,6 +1,7 @@
 (define (domain cutting-process)
   (:requirements :strips :equality)
   (:predicates
+    ; robot existence predicates
     (Arm ?a)
     (Movable ?o)
     (Conf ?q)
@@ -9,17 +10,14 @@
     (Traj ?t)
     (Region ?r)
 
+    ; locational predicates
     (Graspable ?o)
-    (From ?o ?o)
-    (InWorld ?o)
-    (NeedSlice ?o)
-    (SlicedFrom ?o ?h)
-
     (On ?o ?r)
     (Holding ?a ?o)
     (Stackable ?o ?r)
     (Supported ?o ?p ?r)
 
+    ; movement predicates
     (Kin ?a ?o ?p ?g ?q ?t)
     (FreeMotion ?a ?q1 ?t ?q2)
     (HoldingMotion ?a ?q1 ?t ?q2 ?o ?g)
@@ -28,37 +26,53 @@
     (UnsafeTrajObj ?r ?t)
     (ObjCFreeTraj ?r ?t ?o ?p)
 
+    ; robot configuration predicates
     (CanMove)
     (HandEmpty ?a)
     (AtConf ?a ?q)
     (AtPose ?o ?p)
     (AtGrasp ?a ?o ?g)
 
+    ; wrench predicates
     (Wrench ?w)
     (IsStableGrasp ?o ?g ?w)
     (StableHolding ?o ?w)
 
+    ; object predicates
     (Knife ?knife)
     (Cuttable ?o)
+    (Pile ?l) ; todo -- piles are only pushable
+
+    ; inheritance and object existance predicates
+    (EarliestAncestor ?n ?o)
+    (SlicedFrom ?o ?h)
+    (DicedFrom ?o ?l)
+    (InWorld ?o)
+    (NeedSlice ?o)
     (Sliced ?o)
+    (NeedDice ?o)
+    (Diced ?o)
+
+    ; slice kinematics predicates
+    (ValidSliceEffect ?h1 ?h2 ?t)
     (SliceCutWrenches ?knife ?o ?w1 ?w2)
     (SliceCutKin ?a ?knife ?o ?g ?p0 ?w1 ?w2 ?q0 ?q1 ?t)
-    (ValidSliceEffect ?h1 ?h2 ?t)
-    (SlicesInWorld ?o)
 
-    (Pile ?l) ; piles are not cuttable or graspable but are movable? todo
-    (DicedFrom ?o ?l)
-    (Diced ?o)
-    (DicePileInWorld ?o)
-    (NeedDice ?o)
+    ; dice kinematics predicates
     (ValidDiceEffect ?l ?t)
     (DiceCutWrench ?knife ?o ?w)
     (DiceCutKin ?a ?knife ?o ?g ?p0 ?w ?q0 ?q1 ?t)
+
+    ; goal derived predicates
+    (TwoSlicesInWorld ?o)
+    (DicePileInWorld ?o)
+
+    ; todo -- (KnifePushKin ?a ?knife ?o ?g ?p1 ?p2 ?q1 ?q2 ?t)
   )
 
   (:action move_free
     :parameters (?a ?q1 ?q2 ?t)
-    :precondition (and (Arm ?a) (HandEmpty ?a) (CanMove) ; disables moving twice in a row (b/c can smash both moves together) think optimization
+    :precondition (and (Arm ?a) (HandEmpty ?a) (CanMove) ; disables moving twice in a row (b/c can smash both moves together -- optimization)
                        (Conf ?q1) (AtConf ?a ?q1)
                        (not (UnsafeTrajObj ?a ?t))
                        (FreeMotion ?a ?q1 ?t ?q2))
@@ -103,14 +117,28 @@
                  (HandEmpty ?a)
                  (CanMove))
   )
-  (:action slice_move
+  ;todo -- (:action push_with_knife
+  ;  :parameters (?a ?knife ?o ?g ?p1 ?p2 ?q1 ?q2 ?t)
+  ;  :precondition (and (Arm ?a)
+  ;                     (Knife ?knife)
+  ;                     (Cuttable ?o)
+  ;                     (InWorld ?o)
+  ;                     (Grasp ?a ?knife ?g) (AtGrasp ?a ?knife ?g)
+  ;                     (Conf ?q1) (AtConf ?a ?q1)
+  ;                     (Pose ?o ?p1) (AtPose ?o ?p1)
+  ;                     (KnifePushKin ?a ?knife ?o ?g ?p1 ?p2 ?q1 ?q2 ?t))
+  ;    :effect (and (CanMove)
+  ;                 (not (AtConf ?a ?q1)) (AtConf ?a ?q2)
+  ;                 (not (AtPose ?o ?p1)) (AtPose ?o ?p2))
+  ;)
+  (:action slice_move ; todo -- sanity check preconditions and effects
     :parameters (?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t)
     :precondition (and (Arm ?a) 
                       (Knife ?knife) 
                       (Cuttable ?o)
                       (InWorld ?o)
                       (Conf ?q0) (AtConf ?a ?q0)
-                      (Grasp ?a ?knife ?g) (AtGrasp ?a ?knife ?g) ; error comes here!
+                      (Grasp ?a ?knife ?g) (AtGrasp ?a ?knife ?g)
                       (StableHolding ?knife ?w1) (StableHolding ?knife ?w2)
                       (Pose ?o ?p) (AtPose ?o ?p)
                       (SliceCutWrenches ?knife ?o ?w1 ?w2)
@@ -121,23 +149,23 @@
                  (NeedSlice ?o)
     )
   )
-  (:action slice_object
+  (:action slice_object ; todo -- sanity check preconditions and effects
     :parameters (?o ?p ?h1 ?h2 ?t) ; t here isn't a robot movement
     :precondition (and (Cuttable ?o) (InWorld ?o) 
                        (Pose ?o ?p) (AtPose ?o ?p)
                        (NeedSlice ?o)
                        (SlicedFrom ?o ?h1)
-                       (SlicedFrom ?o ?h2) ; does something ensure h1 and h2 aren't the same?
-                       (ValidSliceEffect ?h1 ?h2 ?t) ; aaa? hacky?
-                       )
+                       (SlicedFrom ?o ?h2)
+                       (ValidSliceEffect ?h1 ?h2 ?t)
+    )
     :effect (and (Sliced ?o)
                  (CanMove)
                  (not (InWorld ?o))
                  (InWorld ?h1)
                  (InWorld ?h2) ; is this all the attributes a sliced object should have?
-           )
+    )
   )
-  (:action dice_move
+  (:action dice_move ; todo -- sanity check preconditions and effects
     :parameters (?a ?knife ?o ?g ?p ?w ?q0 ?q1 ?t)
     :precondition (and (Arm ?a) 
                       (Knife ?knife) 
@@ -155,7 +183,7 @@
                  (NeedDice ?o)
     )
   )
-  (:action dice_object
+  (:action dice_object ; todo -- sanity check preconditions and effects
     :parameters (?o ?p ?l ?t) ; t here isn't a robot movement
     :precondition (and (Cuttable ?o) (InWorld ?o) 
                        (Pose ?o ?p) (AtPose ?o ?p)
@@ -186,8 +214,8 @@
       (exists (?o ?p) (and (Pose ?o ?p) (AtPose ?o ?p) 
                            (not (Holding ?r ?o))
                            (not (ObjCFreeTraj ?r ?t ?o ?p)))))
-  (:derived (SlicesInWorld ?o)
-      (exists (?h1 ?h2) (and (Sliced ?o) (SlicedFrom ?o ?h1) (SlicedFrom ?o ?h2) (InWorld ?h1) (InWorld ?h2)))) ; what ensures h1 and h2 aren't the same? 
-  (:derived (DicePileInWorld ?o)
-      (exists (?l) (and (Diced ?o) (DicedFrom ?o ?l) (Pile ?l) (InWorld ?l)))) ; most old ancestor?
+  (:derived (TwoSlicesInWorld ?o) ; todo -- sanity check preconditions and effects
+      (exists (?h1 ?h2) (and (Sliced ?o) (EarliestAncestor ?o ?h1) (EarliestAncestor ?o ?h2) (InWorld ?h1) (InWorld ?h2))))
+  (:derived (DicePileInWorld ?o) ; todo -- sanity check preconditions and effects
+      (exists (?l) (and (Diced ?o) (DicedFrom ?o ?l) (Pile ?l) (InWorld ?l))))
 )

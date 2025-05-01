@@ -48,14 +48,18 @@ def backOutKin(arm, q_end, direction_out, grasp=None, fixed=[]):
 
 #####################################################################
 
-def split_object(o): ## can get o's attribs? can add predicates here? aaaa
+def split_object(o, a): ## can get o's attribs? can add predicates here? aaaa
     # todo return actual potatoes?
     # is this possible? is this necessary?
-    return (None, None, [cutting_process.util.VanishBody(o), cutting_process.util.CreateHalves(o.get_transform())])
+
+    # some dummy obj that you can do body ops on but isn't in the world yet
+    # 'python class for pile' <-- can mimic from vobj.py as template
+    return (a, None, [cutting_process.util.VanishBody(o), cutting_process.util.CreateHalves(o.get_transform())])
+    # as long as diff things are returned here these are treated as diff
+    # since these are generated, pddl can't be stupid and pick the same half for both
 
 def make_pile_from(o):
-    # todo return actual pile?
-    # is this possible? is this necessary?
+    # todo return actual pile
     return (None, [cutting_process.util.VanishBody(o), cutting_process.util.CreatePile(o.get_transform())])
 
 def pose_collision_test(o1, p1, o2, p2):
@@ -104,7 +108,7 @@ def get_grasp_gen():
             # Collision check
             if not exists_ik(arm, grasp_worldF): 
                 continue
-            grasp_objF = numpy.dot(numpy.linalg.inv(body.get_transform()), grasp_worldF)
+            grasp_objF = numpy.dot(numpy.linalg.inv(body.get_transform()), grasp_worldF) # frame conversion math! (worldF --> objF)
             radius = cutting_process.mechanics.computeRadius(body, grasp_objF)
             body_grasp = pb_robot.vobj.BodyGrasp(body, grasp_objF, arm, r=radius,
                                                  mu=cutting_process.mechanics.lookupMu(arm, body))
@@ -297,19 +301,21 @@ def slice_cut(fixed=[]):
             #pb_robot.arm.SetJointValues(q_startFollow0)
 
             command = [pb_robot.vobj.MoveToTouch(arm, q_preStartFollow, q_startFollow0),
-                       pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow0, ee_path=cart_hand_path0, stiffness=stiffness0), 
+                       pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow0, ee_path=cart_hand_path0, stiffness=stiffness0),
                        #pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow1, ee_path=cart_hand_path1, stiffness=stiffness1),
                        #pb_robot.vobj.MoveFromTouch(arm, q_postEndFollow)
                        ]
             pb_robot.viz.remove_all_debug()
+            
+            # todo
 
-            return (conf_start, q_startFollow1, command,) # returns end config too!
+            return (conf_start, conf_end, command,) # returns end config too!
         return None
     return fn
 
-# TODO comments
+# todo
 def dice_cut(fixed=[]):
-    '''Generate a function for planning the slicing motion'''
+    '''Generate a function for planning the dicing motion'''
     def fn(arm, knife, obj, grasp, obj_pose, w):
         '''For arm, use knife (held by grasp) to cut obj (located at obj_pose) by slicing with wrenches w1 and w2'''
 
@@ -318,9 +324,6 @@ def dice_cut(fixed=[]):
             mating_worldF = cutting_process.generators.getObjRelations(knife, obj, body2_pose=obj_pose.pose)
             mating_objF = numpy.dot(numpy.linalg.inv(obj_pose.pose), mating_worldF)
 
-            ###################
-            # First Wrench Path
-            ###################
             obj_aabb = pb_robot.aabb.get_aabb(obj)
             height = pb_robot.aabb.get_aabb_extent(obj_aabb)[2]
             resulting0 = cutting_process.control.generateCartPathFromWrench(w, obj_pose.pose, dist=1.6*height) 
@@ -348,18 +351,20 @@ def dice_cut(fixed=[]):
 
             # Package up all variables to return
             conf_start = pb_robot.vobj.BodyConf(arm, q_preStartFollow)
-            conf_end = pb_robot.vobj.BodyConf(arm, q_postEndFollow)
+            conf_end = conf_start
+            #conf_end = pb_robot.vobj.BodyConf(arm, q_postEndFollow)
             #pb_robot.arm.SetJointValues(q_startFollow0)
 
             command = [pb_robot.vobj.MoveToTouch(arm, q_preStartFollow, q_startFollow0),
                        pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow0, ee_path=cart_hand_path0, stiffness=stiffness0),
                        pb_robot.vobj.MoveFromTouch(arm, q_preStartFollow),
+
                        pb_robot.vobj.MoveToTouch(arm, q_preStartFollow, q_startFollow0),
                        pb_robot.vobj.CartImpedPath(arm, start_q=q_startFollow0, ee_path=cart_hand_path0, stiffness=stiffness0),
-                       pb_robot.vobj.MoveFromTouch(arm, q_postEndFollow)
+                       pb_robot.vobj.MoveFromTouch(arm, q_preStartFollow)
                        ]
             pb_robot.viz.remove_all_debug()
 
-            return (conf_start, q_postEndFollow, command,) # returns end config too!
+            return (conf_start, conf_end, command,) # returns end config too!
         return None
     return fn
