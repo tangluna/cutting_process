@@ -54,7 +54,7 @@
     (Diced ?o)
 
     ; slice kinematics predicates
-    (ValidSliceEffect ?h1 ?h2 ?t)
+    (ValidSliceEffect ?o ?p ?h1 ?h2 ?t)
     (SliceCutWrenches ?knife ?o ?w1 ?w2)
     (SliceCutKin ?a ?knife ?o ?g ?p0 ?w1 ?w2 ?q0 ?q1 ?t)
 
@@ -65,6 +65,7 @@
 
     ; goal derived predicates
     (TwoSlicesInWorld ?o)
+    (FourSlicesInWorld ?o)
     (DicePileInWorld ?o)
 
     ; todo -- (KnifePushKin ?a ?knife ?o ?g ?p1 ?p2 ?q1 ?q2 ?t)
@@ -95,7 +96,7 @@
   (:action pick
     :parameters (?a ?o ?p ?g ?q ?t)
     :precondition (and (Arm ?a) (HandEmpty ?a)
-                       (Movable ?o)
+                       (Movable ?o) (InWorld ?o)
                        (Conf ?q) (AtConf ?a ?q)
                        (Pose ?o ?p) (AtPose ?o ?p)
                        (Kin ?a ?o ?p ?g ?q ?t))
@@ -134,7 +135,7 @@
   (:action slice_move ; todo -- sanity check preconditions and effects
     :parameters (?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t)
     :precondition (and (Arm ?a) 
-                      (Knife ?knife) 
+                      (Knife ?knife) ; subtle mutex here of knife must be held --> cannot be cut i.e. knife always in world
                       (Cuttable ?o)
                       (InWorld ?o)
                       (Conf ?q0) (AtConf ?a ?q0)
@@ -150,19 +151,23 @@
     )
   )
   (:action slice_object ; todo -- sanity check preconditions and effects
-    :parameters (?o ?p ?h1 ?h2 ?t) ; t here isn't a robot movement
+    :parameters (?o ?p ?h1 ?h2 ?p1 ?p2 ?t) ; t here isn't a robot movement
     :precondition (and (Cuttable ?o) (InWorld ?o) 
                        (Pose ?o ?p) (AtPose ?o ?p)
                        (NeedSlice ?o)
                        (SlicedFrom ?o ?h1)
                        (SlicedFrom ?o ?h2)
-                       (ValidSliceEffect ?h1 ?h2 ?t)
+                       (ValidSliceEffect ?o ?p ?h1 ?h2 ?t)
+                       (Pose ?h1 ?p1)
+                       (Pose ?h2 ?p2)
     )
     :effect (and (Sliced ?o)
                  (CanMove)
                  (not (InWorld ?o))
                  (InWorld ?h1)
                  (InWorld ?h2) ; is this all the attributes a sliced object should have?
+                 (AtPose ?h1 ?p1)
+                 (AtPose ?h2 ?p2)
     )
   )
   (:action dice_move ; todo -- sanity check preconditions and effects
@@ -208,14 +213,19 @@
     (exists (?a ?g) (and (Arm ?a) (Grasp ?a ?o ?g) (AtGrasp ?a ?o ?g) (IsStableGrasp ?o ?g ?w)))
   )
   (:derived (UnsafePoseObj ?o ?p)
-    (exists (?o2 ?p2) (and (Pose ?bo ?p2) (AtPose ?o2 ?p2) 
+    (exists (?o2 ?p2) (and (InWorld ?o2) (Pose ?bo ?p2) (AtPose ?o2 ?p2) 
                            (not (ObjCFreePose ?o ?p ?o2 ?p2)))))
   (:derived (UnsafeTrajObj ?r ?t)
-      (exists (?o ?p) (and (Pose ?o ?p) (AtPose ?o ?p) 
+      (exists (?o ?p) (and (InWorld ?o) (Pose ?o ?p) (AtPose ?o ?p) 
                            (not (Holding ?r ?o))
                            (not (ObjCFreeTraj ?r ?t ?o ?p)))))
   (:derived (TwoSlicesInWorld ?o) ; todo -- sanity check preconditions and effects
       (exists (?h1 ?h2) (and (Sliced ?o) (EarliestAncestor ?o ?h1) (EarliestAncestor ?o ?h2) (InWorld ?h1) (InWorld ?h2))))
+  (:derived (FourSlicesInWorld ?o) ; todo -- sanity check preconditions and effects -- are these ensured to be deduped?
+      (exists (?h1 ?h2 ?h3 ?h4 ?intermediate) (and (Sliced ?o) (EarliestAncestor ?o ?h1) (EarliestAncestor ?o ?h2) (EarliestAncestor ?o ?h3) (EarliestAncestor ?o ?h4)
+      (InWorld ?h1) (InWorld ?h2) (InWorld ?h3) (InWorld ?h4) (EarliestAncestor ?o ?intermediate) (Sliced ?intermediate) (SlicedFrom ?o ?intermediate)
+      ))
+  )
   (:derived (DicePileInWorld ?o) ; todo -- sanity check preconditions and effects
       (exists (?l) (and (Diced ?o) (DicedFrom ?o ?l) (Pile ?l) (InWorld ?l))))
 )

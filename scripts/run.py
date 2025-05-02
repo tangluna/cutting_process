@@ -76,7 +76,7 @@ def pddlstream_from_problem(robots, movable):
     init += [('SliceCutWrenches', movable[1], movable[0], down_wrench, across_wrench)]
     init += [('DiceCutWrench', movable[1], movable[0], down_wrench)]
  
-    goal = ('and', ('TwoSlicesInWorld', movable[0]))
+    goal = ('and', ('FourSlicesInWorld', movable[0]))
     #goal = ('and', ('DicePileInWorld', movable[0]))
     # todo -- is the goal that something is sliced or that we have a sliced piece? (aka one piece or two -- currently 2)
 

@@ -13,14 +13,20 @@
   )
     
   (:stream generate-sliced-objects ; todo -- sanity check preconditions and effects
-    :inputs (?o ?a)
-    :domain (and (Cuttable ?o) (EarliestAncestor ?a ?o)) ; should this have an InWorld?
-    :outputs (?h1 ?h2 ?t)
+    :inputs (?o ?a ?p ?knife)
+    :domain (and (Cuttable ?o) (EarliestAncestor ?a ?o) (Pose ?o ?p) (Knife ?knife)) ; should this have an InWorld?
+    :outputs (?h1 ?h2 ?p1 ?p2 ?wd1 ?wa1 ?wd2 ?wa2 ?t)
     :certified (and (SlicedFrom ?o ?h1) (Cuttable ?h1)
                     (SlicedFrom ?o ?h2) (Cuttable ?h2)
-                    (ValidSliceEffect ?h1 ?h2 ?t)
+                    (ValidSliceEffect ?o ?p ?h1 ?h2 ?t)
                     (EarliestAncestor ?a ?h1)
-                    (EarliestAncestor ?a ?h2))
+                    (EarliestAncestor ?a ?h2)
+                    (Pose ?h1 ?p1)
+                    (Pose ?h2 ?p2)
+                    (Wrench ?wd1) (Wrench ?wa1) (Wrench ?wd2) (Wrench ?wa2)
+                    (SliceCutWrenches ?knife ?h1 ?wd1 ?wa1)
+                    (SliceCutWrenches ?knife ?h2 ?wd2 ?wa2)
+                    (Knife ?knife))
   )
   (:stream generate-diced-object ; todo -- sanity check preconditions and effects
     :inputs (?o)
@@ -60,7 +66,7 @@
     :outputs (?q0 ?q1 ?t)
     :certified (and (SliceCutKin ?a ?knife ?o ?g ?p ?w1 ?w2 ?q0 ?q1 ?t) (Conf ?q0) (Conf ?q1) (Traj ?t))
   )
-    (:stream plan-dice-cut-motion
+  (:stream plan-dice-cut-motion
     :inputs (?a ?knife ?o ?g ?p ?w)
     :domain (and (Arm ?a) (Knife ?knife) (Cuttable ?o) (Grasp ?a ?knife ?g) (Pose ?o ?p) (Wrench ?w))
     :outputs (?q0 ?q1 ?t)

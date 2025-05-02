@@ -50,7 +50,7 @@ def cuttingTableScene():
     board_xyz = [0.42, 0.0, pb_robot.placements.stable_z(board, table)] 
     board.set_point(board_xyz)
 
-    potato_file = os.path.join(models_path, 'cucumber.urdf')
+    potato_file = os.path.join(models_path, 'cuttable.urdf')
     potato = pb_robot.body.createBody(potato_file)
     potato_pose = numpy.array([[0., -1., 0., board_xyz[0]],
                                [1., 0., 0., board_xyz[1]],

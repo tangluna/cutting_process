@@ -15,8 +15,11 @@ class VanishBody(object): # todo
     def __init__(self, body):
         self.body = body
     def simulate(self):
-        print("vanishing")
-        pass#self.body.remove_body()
+        self.body.remove_body()
+    def getBody(self):
+        return self.body
+    def updateBody(self, body):
+        self.body = body
     def execute(self, realRobot=None):
        # dictPath = [realRobot.convertToDict(q) for q in self.path]
        # realRobot.execute_position_path(dictPath)
@@ -25,26 +28,37 @@ class VanishBody(object): # todo
         return 'vanish{}'.format(id(self) % 1000)
     
 class CreateHalves(object): # todo
-    def __init__(self, transform):
-        self.transform = transform
+    def __init__(self, h1_path, h2_path, h1_transform, h2_transform):
+        self.h1_path = h1_path
+        self.h2_path = h2_path
+        self.h1_transform = h1_transform
+        self.h2_transform = h2_transform
+        self.h1_name = h1_path[:-len(".urdf")]
+        self.h2_name = h2_path[:-len(".urdf")]
+        self.body1 = None
+        self.body2 = None
     def simulate(self):
-        print("vanished potato transform")
-        print(self.transform)
         curr_path = os.getcwd()
         models_path = os.path.join(os.path.dirname(curr_path), 'models')
 
-        # TODO 2 new potatoes not same potato
+        h1_file = os.path.join(models_path, self.h1_path)
+        potato1 = pb_robot.body.createBody(h1_file)
+        potato1.set_transform(self.h1_transform)
 
-        potato_file = os.path.join(models_path, 'cucumber.urdf')
-        potato = pb_robot.body.createBody(potato_file)
+        h2_file = os.path.join(models_path, self.h2_path)
+        potato2 = pb_robot.body.createBody(h2_file)
+        potato2.set_transform(self.h2_transform)
 
-        potato.set_transform(self.transform)
+        self.body1 = potato1
+        self.body2 = potato2
+        # todo we need references to these objects in main loop
+
     def execute(self, realRobot=None):
        # dictPath = [realRobot.convertToDict(q) for q in self.path]
        # realRobot.execute_position_path(dictPath)
        pass #todo
     def __repr__(self):
-        return 'createHalves{}'.format(id(self) % 1000)
+        return 'createHalves{}'.format(id(self) % 1000) # todo what is going on here
 
 class CreatePile(object):
     def __init__(self, transform):
@@ -114,6 +128,22 @@ def get_fixed(movable):
     fixed = [body for body in pb_robot.utils.get_bodies() if body.id not in movable_ids]
     return fixed
 
+phantom_bodies_map = {}
+
+def dephantomize(obj):
+    if type(obj) == VanishBody and type(obj.getBody()) == type("string"):
+        phantom = obj.getBody()
+        obj.updateBody(phantom_bodies_map[phantom])
+
+# dephantomize -- TODO
+'''print(plan)
+for action in plan:
+    dephantomized = []
+    for arg in action.args:
+        dephantomized.append(samplers.dephantomize(arg))
+    action._replace(args=tuple(dephantomized))
+print(plan)'''
+
 def ExecuteActions(plan):
     '''Iterate through the plan, simulating each action'''
     for name, args in plan:
@@ -134,5 +164,13 @@ def ExecuteActions(plan):
         #if name != "slice_move": #fix fix
         for e in executionItems:
             print(e)
+            if type(e) == VanishBody:
+                dephantomize(e)
+            print(e)
+            # todo handle dephantomizing here as needed
             e.simulate()
+            if type(e) == CreateHalves:
+                phantom_bodies_map[e.h1_name] = e.body1
+                phantom_bodies_map[e.h2_name] = e.body2
+            # do i want to remove things from phantom body map as they are vanished?
             input("Next?")
